@@ -1,0 +1,34 @@
+{
+	"manifest_version": 2,
+	"name": "MRCT-helper",
+	"version": "1.0",
+
+	"description": "helps fill mrct-registry.org with standard values",
+
+	"icons": {
+		"48": "icons/mrct-helper-48.png"
+	},
+
+	"content_scripts": [
+		{
+			"matches": ["*://*.mrct-registry.org/*"],
+			"js": ["mrct-helper.js"]
+		}
+	],
+
+	"applications": {
+		"gecko": {
+			"id": "mrct-helper@humanvisualisierungsknecht.de"
+		}
+	},
+
+	"permissions": [
+		"tabs",
+	],
+
+	"browser_action": {
+		"default_icon": "icons/mrct-helper-48.png",
+		"default_title": "MRCT-Helper",
+		"default_popup": "popup/mrct-helper_popup.html"
+	}
+}
