@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "MRCT-helper",
-	"version": "1.0",
+	"version": "1.2",
 
 	"description": "helps fill mrct-registry.org with standard values",
 
@@ -23,7 +23,7 @@
 	},
 
 	"permissions": [
-		"tabs",
+		"tabs"
 	],
 
 	"browser_action": {

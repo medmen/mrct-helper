@@ -1,7 +1,9 @@
 //// presets for CT and MRI
 //// presets for CT and MRI
 
-var MRT_ITIS_15T = {
+var examtypes = {}; // empty object
+
+examtypes.MRT_ITIS_15T = {
 	"suspcad":"",
 	"patrisk":"medium",
 	"stresstest":"ecg",
@@ -28,7 +30,7 @@ var MRT_ITIS_15T = {
 	"consultants":"aschuster_si"	
 }
 
-var MRT_ITIS_3T = {
+examtypes.MRT_ITIS_3T = {
 	"suspcad":"",
 	"patrisk":"medium",
 	"stresstest":"ecg",
@@ -55,7 +57,7 @@ var MRT_ITIS_3T = {
 	"consultants":"aschuster_si"	
 }
 
-var MRT_STRESS = {
+examtypes.MRT_STRESS = {
 	"suspcad":"",
 	"patrisk":"medium",
 	"stresstest":"ecg",
@@ -82,7 +84,7 @@ var MRT_STRESS = {
 	"consultants":"aschuster_si"	
 }
 
-var CT_KHK = { 
+examtypes.CT_KHK = { 
 	"suspcad":"",
 	"patrisk":"low",
 	"stresstest":"ecg",
@@ -117,33 +119,46 @@ var CT_KHK = {
 	};
 	
 function fill_myform(formtype){
-	if(formtype === false) {
-		return;
-	} else {
-		formtype = window[formtype]; // turn string into variable, see https://stackoverflow.com/questions/5613834/convert-string-to-variable-name-in-javascript
-	}
-	
-	var field = null;
-	var fieldname = null;
-	var fieldvalue = null;
-	
-	Object.keys(formtype).forEach(function(fieldname){
-		fieldvalue = formtype[fieldname];
-		console.log(fieldname + ' - ' + fieldvalue);		
-		// if last character in name is _, we need to get element(s) by name
-		if (fieldname.slice(-1) === '_') { 
-			let fields = document.getElementsByName(fieldname);
-			for(field of fields) {
+	console.log('formtype is: ' + formtype);
+	return new Promise((resolve, reject) => {
+		//resolve("SUCCESS")
+		//reject("FAILURE")
+		if(formtype === false) {
+			reject("FAILURE");
+		}
+		else {
+			console.log('typ: ' + typeof(examtypes[formtype]));
+			if(typeof(examtypes[formtype]) === "object") {
+				var examtyp = examtypes[formtype];
+			} else {
+			reject("FAILURE");
+			// formtype = window["formtype"]; // turn string into variable, see https://stackoverflow.com/questions/5613834/convert-string-to-variable-name-in-javascript
+			}
+		}
+		
+		var field = null;
+		var fieldname = null;
+		var fieldvalue = null;
+		
+		Object.keys(examtyp).forEach(function(fieldname){
+			fieldvalue = examtyp[fieldname];
+			console.log(fieldname + ' - ' + fieldvalue);		
+			// if last character in name is _, we need to get element(s) by name
+			if (fieldname.slice(-1) === '_') { 
+				let fields = document.getElementsByName(fieldname);
+				for(field of fields) {
+					enter_field(field, fieldname, fieldvalue);
+				}
+			} else {
+				let field = document.getElementById(fieldname);
+				// check if field is really an object, otherwise names that do not match would break the script soon
+				if (typeof field !== 'object') {
+					return; // no match found, leave this 
+				}
 				enter_field(field, fieldname, fieldvalue);
 			}
-		} else {
-			let field = document.getElementById(fieldname);
-			// check if field is really an object, otherwise names that do not match would break the script soon
-			if (typeof field !== 'object') {
-				return; // no match found, leave this 
-			}
-			enter_field(field, fieldname, fieldvalue);
-		}
+		});
+		resolve("SUCCESS");
 	});
 };
 
@@ -153,50 +168,57 @@ function enter_field(field, fieldname, fieldvalue) {
 	console.log(fieldname + ' is of type ' + element_type + '( subtype: ' + subtype + ' )' );
 	
 	// set the value
-	if(subtype === 'checkbox') {
-		if(field.value === fieldvalue) {
-			//field.checked = true;
-			field.click();
-			console.log('checkbox ' + fieldname + 'with value ' + fieldvalue + ' checked..' );			
-		}
-	} 
-	
-	if(subtype === 'radio') {
-		if(field.value === fieldvalue) {
-			//field.checked = true;
-			field.click();
-			console.log('radiobutton ' + fieldname + 'with value ' + fieldvalue + ' klicked..' );			
-		}
-	} 
-	
-	if(subtype.slice(0,6)  === 'select') {		
-		if(Array.isArray(fieldvalue)) { // select multiple options
-			fieldvalue.forEach(function(item, index, array) {
+	switch(subtype) {
+		case 'checkbox':
+			if(field.value === fieldvalue) {
+				field.checked = false; // make sure the field is unselected, then simulate a click
+				field.click();
+				console.log('checkbox ' + fieldname + 'with value ' + fieldvalue + ' checked..' );
+			}
+			break;
+			
+		case 'radio':
+			if(field.value === fieldvalue) {
+				field.checked = false; // make sure the field is unselected, then simulate a click
+				field.click();
+				console.log('radiobutton ' + fieldname + 'with value ' + fieldvalue + ' klicked..' );			
+			}
+			break;
+			
+		// thx to https://stackoverflow.com/a/24946696 for showing howto match substrings
+		case (subtype.match(/^select/) || {}).input:
+			if(Array.isArray(fieldvalue)) { // select multiple options
+				fieldvalue.forEach(function(item, index, array) {
+					let opts = field.getElementsByTagName('option');
+					// console.log(opts);
+					for (let option of opts) {
+						if(option.value === item) {
+							option.selected = 'selected';
+							console.log('in select ' + fieldname + ' we selected option ' + item);
+						}
+					}
+				});
+			} else { // select one option
 				let opts = field.getElementsByTagName('option');
 				// console.log(opts);
 				for (let option of opts) {
-					if(option.value === item) {
+					if(option.value === fieldvalue) {
 						option.selected = 'selected';
-						console.log('in select ' + fieldname + ' we selected option ' + item);
+						console.log('in select ' + fieldname + ' we selected option ' + fieldvalue);
 					}
 				}
-			});
-		} else { // select one option
-			let opts = field.getElementsByTagName('option');
-			// console.log(opts);
-			for (let option of opts) {
-				if(option.value === fieldvalue) {
-					option.selected = 'selected';
-					console.log('in select ' + fieldname + ' we selected option ' + fieldvalue);
-				}
 			}
-		}			
-	}
-	
-	if(subtype === 'text'){
-		field.value = fieldvalue;
-		console.log(' in text-field ' + fieldname + ' we entered value ' + fieldvalue);
-	}							
+			break;
+		
+		case 'text':
+			field.value = fieldvalue;
+			console.log(' in text-field ' + fieldname + ' we entered value ' + fieldvalue);
+			break;
+			
+		default: 
+			console.log('NO MATCH for field type ' + subtype);
+			break;
+	} 
 }
 
 
@@ -207,26 +229,36 @@ function highlight_findings() {
 	findiag.scrollIntoView({behavior: "smooth"}); 	
 }
 
+function failure(){
+	alert('uh oh, something went terribly wrong: The internet vanished. Earth is flat. The pope is muslim. Please reload and give a second try');
+}
 
-document.addEventListener("DOMContentLoaded", function(event) { 
-	let formtype = false;
-	let is_mr = document.getElementById('mrs_fslst');
-	let is_ct = document.getElementById('cts_csvlst');
+window.addEventListener("message", function(event) {
+	if (event.source == window &&
+		event.data &&
+		event.data.direction == "from-page") {
+			console.log("button " + event.data.message + " clicked");
+			var mrtype = event.data.message; // cast into global scope 
+			fill_myform(mrtype).then(highlight_findings, failure);
+		}
+});
+
+
+
+	var formtype = false;
+	var is_mr = document.getElementById('mrs_fslst');
+	var is_ct = document.getElementById('cts_csvlst');
 
 	if(is_ct) {
-		fill_myform('CT_KHK').then(highlight_findings());
+		fill_myform('CT_KHK').then(highlight_findings, failure);
 	} else if(is_mr) {
 		let selector = `<td>&nbsp;</td>
 						<td>
-							<button onclick="fill_myform('MRT_ITIS_15T')">MR-ITIS 1,5T</button>
-							<button onclick="fill_myform('MRT_ITIS_3T')">MR-ITIS 3T</button>
-							<button onclick="fill_myform('MRT_STRESS')">MR-A-STRESS</button>
+							<button onclick='window.postMessage({direction: "from-page", message: "MRT_ITIS_15T"}, "*");'>MR-ITIS 1,5T</button>
+							<button onclick='window.postMessage({direction: "from-page", message: "MRT_ITIS_3T"}, "*");'>MR-ITIS 3T</button>
+							<button onclick='window.postMessage({direction: "from-page", message: "MRT_STRESS"}, "*");'>MR-A-STRESS</button>
 						</td>
 						<td>&nbsp;</td>`;
-						//td><button onclick="fill_myform('MRT_STRESS').then(highlight_findings())">MR-A-STRESS</button> </td>`;
-		let target_tr = document.body.getElementsByTagName("table")[0].getElementsByTagName("tr")[3]; // get third row in first table
+		let target_tr = document.body.getElementsByTagName("table")[0].getElementsByTagName("tr")[1]; // get 2nd row in first table
 		target_tr.innerHTML = selector;	
-	} else {
-		alert('Weder CT noch MRT gefunden :-(');
-	}
-});
+	} 
