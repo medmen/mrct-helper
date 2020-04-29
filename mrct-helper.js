@@ -117,8 +117,36 @@ examtypes.CT_KHK = {
 	"rw_reporter_":"radiologist",
 	"consultants":"akiessling_dsw"
 	};
+
+
+
+function clearForm() {
+	// save fields we dont want to reset
+	const preserve_fields = ["examinedby", "examinationdate", "registry_id", "age", "gender", "weight", "height"];
+	let preserve_obj = {};
+	preserve_fields.forEach(function(item, index, array) {
+		field = document.getElementById(item);
+		if(field.type.match(/^select/)){
+			preserve_obj[item] = field.options[field.selectedIndex].value;
+		} else {
+			preserve_obj[item] = field.value;
+		}
+	});
+	console.log("preserving:");
+	console.log(JSON.stringify(preserve_obj, null, 4));
 	
+	// reset the whole form
+	document.getElementsByTagName("form")[0].reset();
+	
+	// restore saved fields
+	Object.keys(preserve_obj).forEach(function(field_id){
+		let field = document.getElementById(field_id);
+		field.value = preserve_obj[field_id];
+	});
+}
+
 function fill_myform(formtype){
+	console.clear();
 	console.log('formtype is: ' + formtype);
 	return new Promise((resolve, reject) => {
 		//resolve("SUCCESS")
@@ -127,12 +155,10 @@ function fill_myform(formtype){
 			reject("FAILURE");
 		}
 		else {
-			console.log('typ: ' + typeof(examtypes[formtype]));
 			if(typeof(examtypes[formtype]) === "object") {
 				var examtyp = examtypes[formtype];
 			} else {
-			reject("FAILURE");
-			// formtype = window["formtype"]; // turn string into variable, see https://stackoverflow.com/questions/5613834/convert-string-to-variable-name-in-javascript
+				reject("FAILURE");
 			}
 		}
 		
@@ -140,6 +166,16 @@ function fill_myform(formtype){
 		var fieldname = null;
 		var fieldvalue = null;
 		
+		/***
+		* before we fill the form, make sure to clear it. Otherwise hitting different buttons would clutter the form more and more.
+		* DANGER: document.getElementsByTagName("form")[0].reset(); --> this will also delete patient data we entered before
+		* So we need an extra function to handle this!
+		*/
+		clearForm();
+
+		/**
+		* Now loop through predefined fields and enter the corresponding predefined values
+		**/
 		Object.keys(examtyp).forEach(function(fieldname){
 			fieldvalue = examtyp[fieldname];
 			console.log(fieldname + ' - ' + fieldvalue);		
@@ -170,7 +206,16 @@ function enter_field(field, fieldname, fieldvalue) {
 	// set the value
 	switch(subtype) {
 		case 'checkbox':
-			if(field.value === fieldvalue) {
+			if(Array.isArray(fieldvalue)) { // check multiple boxes with same name
+				fieldvalue.forEach(function(item, index, array) {
+					if(field.value === item) {
+						field.checked = false; // make sure the field is unselected, then simulate a click
+						field.click();
+						console.log('checkbox ' + fieldname + 'with value ' + item + ' checked..' );
+					}
+				});
+			}
+			else if(field.value === fieldvalue) {
 				field.checked = false; // make sure the field is unselected, then simulate a click
 				field.click();
 				console.log('checkbox ' + fieldname + 'with value ' + fieldvalue + ' checked..' );
@@ -230,9 +275,10 @@ function highlight_findings() {
 }
 
 function failure(){
-	alert('uh oh, something went terribly wrong: The internet vanished. Earth is flat. The pope is muslim. Please reload and give a second try');
+	console.log('uh oh, something went terribly wrong: The internet vanished. Earth is flat. The pope is muslim. Please reload and give a second try');
 }
 
+// functions in content scripts cannot be called directly from page, so we need messaging to check which mri-button was clicked 
 window.addEventListener("message", function(event) {
 	if (event.source == window &&
 		event.data &&
@@ -244,21 +290,28 @@ window.addEventListener("message", function(event) {
 });
 
 
+/****
+* the main part:
+*
+* check if we are on a CT or MRI form
+* CT forms get executed right away.
+* for MRI forms we need selections, so we inject buttons into the page
+* clicking a button sends a message to the listener above which will trigger the correspondig MRI-form to be used.
+**/
 
-	var formtype = false;
-	var is_mr = document.getElementById('mrs_fslst');
-	var is_ct = document.getElementById('cts_csvlst');
+var is_mr = document.getElementById('mrs_fslst');
+var is_ct = document.getElementById('cts_csvlst');
 
-	if(is_ct) {
-		fill_myform('CT_KHK').then(highlight_findings, failure);
-	} else if(is_mr) {
-		let selector = `<td>&nbsp;</td>
-						<td>
-							<button onclick='window.postMessage({direction: "from-page", message: "MRT_ITIS_15T"}, "*");'>MR-ITIS 1,5T</button>
-							<button onclick='window.postMessage({direction: "from-page", message: "MRT_ITIS_3T"}, "*");'>MR-ITIS 3T</button>
-							<button onclick='window.postMessage({direction: "from-page", message: "MRT_STRESS"}, "*");'>MR-A-STRESS</button>
-						</td>
-						<td>&nbsp;</td>`;
-		let target_tr = document.body.getElementsByTagName("table")[0].getElementsByTagName("tr")[1]; // get 2nd row in first table
-		target_tr.innerHTML = selector;	
-	} 
+if(is_ct) {
+	fill_myform('CT_KHK').then(highlight_findings, failure);
+} else if(is_mr) {
+	const selector = `<td>&nbsp;</td>
+					<td>
+						<button onclick='window.postMessage({direction: "from-page", message: "MRT_ITIS_15T"}, "*");'>MR-ITIS 1,5T</button>
+						<button onclick='window.postMessage({direction: "from-page", message: "MRT_ITIS_3T"}, "*");'>MR-ITIS 3T</button>
+						<button onclick='window.postMessage({direction: "from-page", message: "MRT_STRESS"}, "*");'>MR-A-STRESS</button>
+					</td>
+					<td>&nbsp;</td>`;
+	let target_tr = document.body.getElementsByTagName("table")[0].getElementsByTagName("tr")[1]; // get 2nd row in first table
+	target_tr.innerHTML = selector;	
+} 
