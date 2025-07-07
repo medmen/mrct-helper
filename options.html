@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Options - MRCT Helper</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 5px 10px;
+        }
+        #examTypesList {
+            margin-top: 15px;
+        }
+        .examType {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .deleteButton {
+            margin-left: 10px;
+            color: red;
+            cursor: pointer;
+        }
+        #currentFormValues {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="section">
+    <h2>General Settings</h2>
+    <form id="generalOptions">
+        <label>Border color <input type="text" id="color" name="color" /></label>
+        <button type="submit">Save</button>
+    </form>
+</div>
+
+<div class="section">
+    <h2>Manage Exam Types</h2>
+    <div>
+        <label for="examTypeName">Exam Type Name:</label>
+        <input type="text" id="examTypeName" placeholder="Enter a name for this exam type" />
+        <button id="saveCurrentForm">Save Current Form Values as Exam Type</button>
+        <button id="captureFormValues">Capture Current Form Values</button>
+    </div>
+
+    <div id="currentFormValues">
+        <p>No form values captured yet. Click "Capture Current Form Values" to get the current form state.</p>
+    </div>
+
+    <h3>Saved Exam Types</h3>
+    <div id="examTypesList">
+        <p>No saved exam types yet.</p>
+    </div>
+</div>
+
+<script src="options.js"></script>
+
+</body>
+</html>

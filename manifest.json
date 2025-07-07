@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "MRCT-helper",
-	"version": "1.4",
+	"version": "1.5",
 
 	"description": "helps fill mrct-registry.org with standard values",
 
@@ -16,14 +16,19 @@
 		}
 	],
 
-	"applications": {
+	"options_ui": {
+		"page": "options.html"
+	},
+
+	"browser_specific_settings": {
 		"gecko": {
 			"id": "mrct-helper@humanvisualisierungsknecht.de"
 		}
 	},
 
 	"permissions": [
-		"tabs"
+		"tabs",
+		"storage"
 	],
 
 	"browser_action": {
