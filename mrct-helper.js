@@ -99,7 +99,7 @@ examtypes.MRT_STRESS = {
 
 examtypes.CT_KHK = { 
 	"suspcad":"",
-	"patrisk":"low",
+	"patrisk":"medium",
 	"stresstest":"ecg",
 	"stresstestresults":"inconclusive",
 	"fd_imagequality_":"good",
@@ -118,8 +118,8 @@ examtypes.CT_KHK = {
 	"ctscc_fieldset":"",
 	"ctscc_gating_":"prospective",
 	"ctscc_cm":"yes",
-	"ctscc":"iomeprol",
-	"ctscc_iomeprol":"imeron",
+	"ctscc":"iobitrol",
+	"ctscc_iobitrol_":"xenetix",
 	"ctscc_concentrcm":"350", 
 	"ctscc_cm_amount":"120",
 	"ctscc_cm_flowrate":"5",
@@ -127,8 +127,7 @@ examtypes.CT_KHK = {
 	"pp_imagereconstrlst":"safire",
 	"pp_perf":"",
 	"pp_perflst":["3d", "sc_mprs"],
-	"rw_reporter_":"radiologist",
-	"consultants":"akiessling_dsw"
+	"rw_reporter_":"radiologist"
 	};
 
 
