@@ -3,11 +3,31 @@
 
 var examtypes = {}; // empty object
 
+examtypes.MRT_VITAL_15T = {
+	"diagnosis_":"viabilityassessment",
+	"fd_imagequality_":"good",
+	"outcome":"yes",
+	"con_outcomelst":"nofurtherdiagn",
+	"com_ae_":"no",
+	"mrs_fslst":"1_5t",
+	"mrs_lst":"siemens_magnetom_sytim",
+	"mrexam_":["morphology", "cinemri"],
+	"mrexm_cm":"yes",
+	"mrexm_cmapp_":["lateenh"],
+	"mrexm":"gadoterate",
+	"mrexm_product":"dotavision",
+	"mrexm_dist":"b_e_imaging",
+	"mrexm_concentrcm":"0_1", 
+	"mrexm_examtime_":"lt30",
+	"ecg_mhrlst_":"btw65_75",
+	"ecg_hrlst":"sinusrhythm",
+	"pp_perf":"",
+	"pp_perflst":["ventrvolfunc", "musclecalc"],
+	"rw_reporter_":"radiologist"	
+}
+
 examtypes.MRT_ITIS_15T = {
-	"suspcad":"",
-	"patrisk":"medium",
-	"stresstest":"ecg",
-	"stresstestresults":"inconclusive",
+	"suspmyocarditis_":"",
 	"fd_imagequality_":"good",
 	"outcome":"yes",
 	"con_outcomelst":"nofurtherdiagn",
@@ -17,24 +37,20 @@ examtypes.MRT_ITIS_15T = {
 	"mrexam_":["morphology", "cinemri", "edemaimg"],
 	"mrexm_cm":"yes",
 	"mrexm_cmapp_":["lateenh", "earlyenh"],
-	"mrexm":"gd_dota",
-	"mrexm_product":"dotarem",
-	"mrexm_dist":"guerbet",
+	"mrexm":"gadoterate",
+	"mrexm_product":"dotavision",
+	"mrexm_dist":"b_e_imaging",
 	"mrexm_concentrcm":"0_1", 
 	"mrexm_examtime_":"btw30_60",
 	"ecg_mhrlst_":"btw65_75",
 	"ecg_hrlst":"sinusrhythm",
 	"pp_perf":"",
 	"pp_perflst":["ventrvolfunc", "musclecalc", "edemacalc"],
-	"rw_reporter_":"radiologist",
-	"consultants":"aschuster_si"	
+	"rw_reporter_":"radiologist"	
 }
 
 examtypes.MRT_ITIS_3T = {
-	"suspcad":"",
-	"patrisk":"medium",
-	"stresstest":"ecg",
-	"stresstestresults":"inconclusive",
+	"suspmyocarditis_":"",
 	"fd_imagequality_":"good",
 	"outcome":"yes",
 	"con_outcomelst":"nofurtherdiagn",
@@ -44,22 +60,20 @@ examtypes.MRT_ITIS_3T = {
 	"mrexam_":["morphology", "cinemri", "edemaimg", "t1map", "t2map"],
 	"mrexm_cm":"yes",
 	"mrexm_cmapp_":"lateenh",
-	"mrexm":"gd_dota",
-	"mrexm_product":"dotarem",
-	"mrexm_dist":"guerbet",
+	"mrexm":"gadoterate",
+	"mrexm_product":"dotavision",
+	"mrexm_dist":"b_e_imaging",
 	"mrexm_concentrcm":"0_1", 
 	"mrexm_examtime_":"btw30_60",
 	"ecg_mhrlst_":"btw65_75",
 	"ecg_hrlst":"sinusrhythm",
 	"pp_perf":"",
 	"pp_perflst":["ventrvolfunc", "musclecalc", "edemacalc", "t1mapping", "t2mapping"],
-	"rw_reporter_":"radiologist",
-	"consultants":"aschuster_si"	
+	"rw_reporter_":"radiologist"	
 }
 
 examtypes.MRT_STRESS = {
-	"suspcad":"",
-	"patrisk":"medium",
+	"knowncad_":"",
 	"stresstest":"ecg",
 	"stresstestresults":"inconclusive",
 	"fd_imagequality_":"good",
@@ -80,8 +94,7 @@ examtypes.MRT_STRESS = {
 	"ecg_hrlst":"sinusrhythm",
 	"pp_perf":"",
 	"pp_perflst":["ventrvolfunc", "musclecalc"],
-	"rw_reporter_":"radiologist",
-	"consultants":"aschuster_si"	
+	"rw_reporter_":"radiologist"	
 }
 
 examtypes.CT_KHK = { 
