@@ -35,6 +35,9 @@ Future enhancements include:
 3. For CT forms, it will automatically fill the form with predefined CT values (right now there is only one preset for CT exams)
 4. For MRI forms, it will display buttons for different MRI exam types
 5. Click on a button to fill the form with the corresponding exam type values
+6. Review the filled form and make necessary adjustments
+7. Enjoy the time saved by not having to fill in the same boring common fields over and over again :)
+8. Buy the developer a coffee if you like the extension and want to support further development 
 
 ## Technical Details
 
