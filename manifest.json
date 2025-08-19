@@ -16,7 +16,7 @@
 		}
 	],
 
-	"applications": {
+	"browser_specific_settings": {
 		"gecko": {
 			"id": "mrct-helper@humanvisualisierungsknecht.de"
 		}
