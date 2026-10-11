@@ -8,19 +8,19 @@ If it's on a button which contains class "clear":
 
 document.addEventListener("click", (e) => {
   if (e.target.id === "CT") {
-    browser.tabs.executeScript(null, { 
+    scripting.executeScript(null, {
       code: `fill_myform();`
     });
   }
   else if (e.target.id === "MR-STRESS") {
-    browser.tabs.executeScript({ 
+    scripting.executeScript({
       file: "mrct-helper.js",
       code: `fill_myform();`
     });
   }
   else if (e.target.id === "MR-ITIS") {
- 	alert('Hit Itis'); 
-    browser.tabs.executeScript(null, { 
+ 	alert('Hit Itis');
+    scripting.executeScript(null, {
       file: "mrct-helper.js" 
     });
   }

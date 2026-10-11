@@ -1,9 +1,9 @@
 {
+	"description": "MRCT-helper - Browser Extension to help prefill mrct-registry.org with standard values",
 	"manifest_version": 3,
 	"name": "MRCT-helper",
-	"version": "1.5",
-
-	"description": "helps fill mrct-registry.org with standard values",
+	"version":"1.5",
+	"license": "MIT",
 
 	"icons": {
 		"48": "icons/mrct-helper-48.png"
@@ -11,7 +11,7 @@
 
 	"content_scripts": [
 		{
-			"matches": ["*://*.mrct-registry.org/*"],
+			"matches": ["*://registry.mrct-registry.org/*"],
 			"js": ["mrct-helper.js"]
 		}
 	],
@@ -22,11 +22,16 @@
 		}
 	},
 
-	"permissions": [
-		"tabs"
+	"host_permissions": [
+		"*://registry.mrct-registry.org/*"
 	],
 
-	"browser_action": {
+	"permissions": [
+		"tabs",
+		"scripting"
+	],
+
+	"action": {
 		"default_icon": "icons/mrct-helper-48.png",
 		"default_title": "MRCT-Helper",
 		"default_popup": "popup/mrct-helper_popup.html"
