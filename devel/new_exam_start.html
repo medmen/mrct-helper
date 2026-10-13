@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+        <html lang="en">
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New Examination - ESCR Registry</title>
+    <meta name="_csrf" content="yLfsQY2uOECY4aVVlMZM4j-NTbeP6Hs3O3FFgrF24rHiGrwRrNXUeb3LCXm12ME08ut4gwq8YI692UIaCEZ9sIYX2oaDKd4j"/>
+    <meta name="_csrf_header" content="X-XSRF-TOKEN"/>
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="escr-hero-bg min-h-screen flex flex-col">
+<header class="bg-gray-100 shadow-sm sticky top-0 z-10">
+
+
+    <div class="max-w-7xl mx-auto px-4 py-3">
+
+        <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 sm:gap-x-6">
+
+            <a href="/" class="shrink-0 flex items-center gap-[20px] no-underline" aria-label="ESCR MR/CT Registry — home">
+
+                <img src="/images/escr-bayer-logo.svg" alt="Kindly supported by Bayer — European Society of Cardiovascular Radiology"
+                     class="h-9 sm:h-12 w-auto" />
+
+                <span class="hidden lg:flex items-center h-[41px] pl-[20px] border-l border-[#151515] font-brand uppercase tracking-[0.12em] text-[11px] leading-none text-gray-600 whitespace-nowrap">New Examination</span>
+            </a>
+
+
+            <nav class="flex-1 basis-auto flex-nowrap max-[380px]:basis-full max-[380px]:flex-wrap flex items-center justify-end gap-1 text-sm font-medium" aria-label="Main">
+                <a href="/"
+                   class="px-3 py-2 rounded-md text-gray-700 hover:bg-escr-red/10 hover:text-escr-red transition-colors">Home</a>
+                <a href="/registry" class="px-3 py-2 rounded-md text-gray-700 hover:bg-escr-red/10 hover:text-escr-red transition-colors">Registry</a>
+
+
+                <div class="relative ml-1">
+                    <button id="user-menu-btn" type="button"
+                            class="flex items-center gap-2 px-2 py-2 rounded-md text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-800 focus:outline-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="hidden sm:inline">alexander.schuster@diakonie-sw.de</span>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-20">
+                        <a href="/profile"
+                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                        <a href="/registry/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                        <div class="border-t border-gray-100"></div>
+                        <form action="/logout" method="post" class="m-0"><input type="hidden" name="_csrf" value="yLfsQY2uOECY4aVVlMZM4j-NTbeP6Hs3O3FFgrF24rHiGrwRrNXUeb3LCXm12ME08ut4gwq8YI692UIaCEZ9sIYX2oaDKd4j"/>
+                            <input type="hidden" name="_csrf" value="yLfsQY2uOECY4aVVlMZM4j-NTbeP6Hs3O3FFgrF24rHiGrwRrNXUeb3LCXm12ME08ut4gwq8YI692UIaCEZ9sIYX2oaDKd4j"/>
+                            <button type="submit"
+                                    class="block w-full text-left px-4 py-2 text-sm text-escr-red hover:bg-gray-100">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+
+
+            </nav>
+        </div>
+    </div>
+
+    <script src="/js/csrf-fetch.js"></script>
+    <script src="/js/header-menu.js"></script>
+
+    <script src="/js/session-keepalive.js"></script>
+</header>
+
+
+<nav class="w-full max-w-7xl mx-auto px-4 pt-4 text-sm text-gray-500" aria-label="Breadcrumb">
+    <a href="/" class="hover:text-blue-600">Home</a>
+    <span class="mx-1">&gt;</span>
+    <span class="text-gray-700 font-medium">New Examination</span>
+</nav>
+
+<div id="app"></div>
+
+<script src="/js/vue.global.js"></script>
+<script src="/js/form-search.js"></script>
+<script src="/js/components/NumberField.js"></script>
+<script src="/js/components/SelectField.js"></script>
+<script src="/js/components/CheckboxField.js"></script>
+<script src="/js/components/CheckboxGroupField.js"></script>
+<script src="/js/components/TextField.js"></script>
+<script src="/js/components/RadioGroupField.js"></script>
+<script src="/js/components/DeviceSelectField.js"></script>
+<script src="/js/components/AllDeviceSelectField.js"></script>
+<script src="/js/components/ContrastMaterialField.js"></script>
+<script src="/js/components/InjectorSelectField.js"></script>
+<script src="/js/components/DateField.js"></script>
+<script src="/js/components/DisplayFromFieldField.js"></script>
+<script src="/js/components/ResponsibleConsultantField.js"></script>
+<script src="/js/form-components.js"></script>
+<script src="/js/date-format.js"></script>
+<script src="/js/examination-new.js"></script>
+<footer class="bg-gray-100 border-t border-white escr-footer font-brand">
+    <div class="max-w-7xl mx-auto px-4 pt-[30px] pb-10">
+
+        <img src="/images/escr-logo.svg" alt="European Society of Cardiovascular Radiology"
+             class="w-[124px] sm:w-[165px] max-w-full h-auto -ml-[4px] sm:-ml-[5px]" />
+
+
+        <nav class="mt-[30px] text-sm font-medium leading-[1.2] uppercase text-escr-red" aria-label="Footer">
+            <a href="mailto:info@mrct-registry.org"
+               class="hover:text-escr-red-dark no-underline">Contact Support</a>
+
+            <span>|</span>
+            <a href="/files/MRCT-Privacy-Statement-September-2026.pdf" target="_blank" rel="noopener"
+               class="hover:text-escr-red-dark no-underline">Privacy Statement</a>
+        </nav>
+
+
+        <div class="mt-[30px] text-xs font-light leading-[1.2] text-black/[0.42]">
+            <p class="uppercase">The European MR/CT Registry is a project of the European Society of Cardiovascular Radiology</p>
+            <p class="mt-1">
+                MR/CT REGISTRY | Am Gestade 1 | 1010 Vienna | Austria |
+                Phone: <a href="tel:+4315334064909" class="hover:text-escr-red no-underline">+43 1 533 40 64 909</a> |
+                Email: <a href="mailto:office@escr.org" class="hover:text-escr-red no-underline">office@escr.org</a>
+            </p>
+        </div>
+
+        <div class="mt-4 text-[10px] text-gray-400">Built 2026-10-04T21:26:01.528Z UTC · 2.0.3</div>
+    </div>
+</footer>
+</body>
+</html>
+</title>
+</head>
+<body>
+
+</body>
+</html>

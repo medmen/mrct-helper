@@ -28,7 +28,8 @@
 
 	"permissions": [
 		"tabs",
-		"scripting"
+		"scripting",
+		"activeTab"
 	],
 
 	"action": {

@@ -99,11 +99,17 @@ examtypes.MRT_STRESS = {
 	"rw_reporter_":"radiologist"
 };
 
+/**
+ * Examtype CT_KHK
+ * New since 2026: fields starting with nahme "field_" need looking for children with value ="value"
+ *
+ */
+
 examtypes.CT_KHK = {
 	"cad":"yes",
-	"suspected":"yes",
+	"field-cad_status":"suspected",
 	"patient_risk":"ptp2024_15_50",
-	"ecg":"yes",
+	"field-stress_test_performed":"ecg",
 	"fd_image_quality_":"good",
 	"con_outcome_ct":"yes",
 	"con_outcome_option":"nofurtherdiagn",
@@ -130,37 +136,6 @@ examtypes.CT_KHK = {
 	"pp_perflst":["3d", "mpr", "cpr", "vrt"],
 	"rw_reporter_":"radiologist"
 };
-
-function waitForElement(selector, timeout = 500) {
-	return new Promise((resolve) => {
-		let el = selector.startsWith('#')
-			? document.getElementById(selector.slice(1))
-			: document.querySelector(selector);
-		if (el) {
-			return resolve(el);
-		}
-
-		const observer = new MutationObserver((mutations, obs) => {
-			let element = selector.startsWith('#')
-				? document.getElementById(selector.slice(1))
-				: document.querySelector(selector);
-			if (element) {
-				obs.disconnect();
-				resolve(element);
-			}
-		});
-
-		observer.observe(document.body || document.documentElement, {
-			childList: true,
-			subtree: true
-		});
-
-		setTimeout(() => {
-			observer.disconnect();
-			resolve(null);
-		}, timeout);
-	});
-}
 
 function clearForm() {
 	// save fields we dont want to reset
@@ -216,22 +191,24 @@ async function fill_myform(formtype) {
 			let fields = document.getElementsByName(fieldname);
 			if (!fields || fields.length === 0) {
 				// Wait briefly if dynamic
-				await waitForElement(`[name="${fieldname}"]`, 500);
+				await waitForElement(`[name="${fieldname}"]`);
 				fields = document.getElementsByName(fieldname);
 			}
 			for (let field of fields) {
 				if (field && typeof field === 'object') {
 					enter_field(field, fieldname, fieldvalue);
+					emitFormEvents(field);
 				}
 			}
 		} else {
 			// Resolve element dynamically by ID (handles #cad and Vue conditional nodes)
 			let field = document.getElementById(fieldname);
 			if (!field) {
-				field = await waitForElement(`#${fieldname}`, 500);
+				field = await waitForElement(`#${fieldname}`);
 			}
 			if (field) {
 				enter_field(field, fieldname, fieldvalue);
+				emitFormEvents(field);
 			} else {
 				console.warn("Field with ID " + fieldname + " not found within timeout.");
 			}
@@ -258,16 +235,12 @@ function enter_field(field, fieldname, fieldvalue) {
 			if (Array.isArray(fieldvalue)) { // check multiple boxes with same name
 				fieldvalue.forEach(function(item) {
 					if (field.value === item) {
-						field.checked = true;
-						field.dispatchEvent(new Event('input', { bubbles: true }));
-						field.dispatchEvent(new Event('change', { bubbles: true }));
+						setCheckbox(field, true);
 						console.log('checkbox ' + fieldname + ' with value ' + item + ' checked..');
 					}
 				});
 			} else if (field.value === fieldvalue || fieldvalue === "yes" || fieldvalue === true) {
-				field.checked = true;
-				field.dispatchEvent(new Event('input', { bubbles: true }));
-				field.dispatchEvent(new Event('change', { bubbles: true }));
+				setCheckbox(field, true);
 				console.log('checkbox ' + fieldname + ' with value ' + fieldvalue + ' checked..');
 			} else {
 				console.log('checkbox ' + fieldname + ' with value ' + fieldvalue + ' not found..');
@@ -276,9 +249,7 @@ function enter_field(field, fieldname, fieldvalue) {
 
 		case 'radio':
 			if (field.value === fieldvalue) {
-				field.checked = true;
-				field.dispatchEvent(new Event('input', { bubbles: true }));
-				field.dispatchEvent(new Event('change', { bubbles: true }));
+				setRadio(field, true);
 				console.log('radiobutton ' + fieldname + ' with value ' + fieldvalue + ' klicked..');
 			}
 			break;
@@ -286,29 +257,35 @@ function enter_field(field, fieldname, fieldvalue) {
 		// thx to https://stackoverflow.com/a/24946696 for showing howto match substrings
 		case (subtype.match(/^select/) || {}).input:
 			if (Array.isArray(fieldvalue)) { // select multiple options
+				fieldvalue.forEach((option, index) => {
+					setSelect(field, option.value);
+					console.log('in select ' + fieldname + ' we selected option ' + option.value);
+				});
+
+				/**
 				for (let option of field.getElementsByTagName('option')) {
 					if (fieldvalue.includes(option.value)) {
 						option.selected = true;
 						console.log('in select ' + fieldname + ' we selected option ' + option.value);
 					}
 				}
+				**/
 			} else { // select one option
+				setSelect(field, fieldvalue);
+				console.log('in select ' + fieldname + ' we selected option ' + fieldvalue);
+				/**
 				for (let option of field.getElementsByTagName('option')) {
 					if (option.value === fieldvalue) {
 						option.selected = true;
 						console.log('in select ' + fieldname + ' we selected option ' + fieldvalue);
 					}
-				}
+				}**/
 			}
-			field.dispatchEvent(new Event('input', { bubbles: true }));
-			field.dispatchEvent(new Event('change', { bubbles: true }));
 			break;
 
 		case 'text':
 		default:
 			field.value = fieldvalue;
-			field.dispatchEvent(new Event('input', { bubbles: true }));
-			field.dispatchEvent(new Event('change', { bubbles: true }));
 			console.log('in text-field ' + fieldname + ' we entered value ' + fieldvalue);
 			break;
 	}
@@ -326,6 +303,7 @@ function failure(){
 	console.log('uh oh, something went terribly wrong: The internet vanished. Earth is flat. The pope is muslim. Please reload and give a second try');
 }
 
+/**
 // functions in content scripts cannot be called directly from page, so we need messaging to check which mri-button was clicked 
 console.log('adding listener for messages from page');
 window.addEventListener("message", function(event) {
@@ -337,6 +315,7 @@ window.addEventListener("message", function(event) {
 			fill_myform(mrtype).then(highlight_findings, failure);
 		}
 });
+**/
 
 /****
 * the main part:
@@ -347,45 +326,115 @@ window.addEventListener("message", function(event) {
 * clicking a button sends a message to the listener above which will trigger the correspondig MRI-form to be used.
 **/
 
-function handleModalitySelection() {
-	var modality_selector = document.getElementById('form-type-select');
-	if (!modality_selector || modality_selector.selectedIndex < 0) {
-		console.log('modality selector not found or no selection made');
-		return;
-	}
+function handleModalitySelection(modality) {
+	console.log('selected modality is: ' + modality);
 
-	var selected_modality = modality_selector.options[modality_selector.selectedIndex].text;
-	console.log('selected modality: ' + modality_selector.selectedIndex);
-	console.log('selected modality is: ' + selected_modality);
-
-	if (selected_modality.startsWith("CT")) {
-		fill_myform('CT_KHK').then(highlight_findings, failure);
-
-	} else if (selected_modality.startsWith("MR")) {
+	if (modality.startsWith("CT")) {
+		// fill_myform('CT_KHK').then(highlight_findings, failure);
+		fill_myform('CT_KHK');
+	} else if (modality.startsWith("MR")) {
 		// Avoid duplicate button elements
 		if (document.getElementById("mrct-helper-buttons")) {
 			return;
 		}
 
-		let selector_td = document.createElement("td");
-		selector_td.id = "mrct-helper-buttons";
-		selector_td.innerHTML = `<button onclick='window.postMessage({direction: "from-page", message: "MRT_VITAL_15T"}, "*");'>MR-VITAL 1,5T</button>
-<button onclick='window.postMessage({direction: "from-page", message: "MRT_ITIS_3T"}, "*");'>MR-ITIS 3T</button>
-<button onclick='window.postMessage({direction: "from-page", message: "MRT_STRESS"}, "*");'>MR-A-STRESS</button>`;
+		let selector_div = document.createElement("div");
+		selector_div.id = "mrct-helper-buttons";
 
-		let target_tr = document.getElementsByTagName("table")[0]?.getElementsByTagName("tr")[1];
-		let target_td = target_tr?.getElementsByTagName("td")[1];
-		if (target_td) {
-			target_td.replaceWith(selector_td);
-		}
+		const button = document.createElement("button");
+		button.type = "button";
+		button.textContent = "MRT-VITAL 1,5T";
+		button.addEventListener('click', () => {
+			window.postMessage({direction: "from-page", message: "MRT_VITAL_15T"}, "*");
+		});
+		selector_div.appendChild(button);
+
+		const button2 = document.createElement("button");
+		button2.type = "button";
+		button2.textContent = "MRT_ITIS_3T";
+		button2.addEventListener('click', () => {
+			window.postMessage({direction: "from-page", message: "MRT_ITIS_3T"}, "*");
+		});
+		selector_div.appendChild(button2);
+
+		const button3 = document.createElement("button");
+		button3.type = "button";
+		button3.textContent = "MRT-STRESS";
+		button3.addEventListener('click', () => {
+			window.postMessage({direction: "from-page", message: "MRT_STRESS"}, "*");
+		});
+		selector_div.appendChild(button3);
+
+		let target = document.getElementById('app');
+		target.insertBefore(selector_div, target.firstChild);
 	}
 }
 
+
+function emitFormEvents(el) {
+	el.dispatchEvent(new Event("input", { bubbles: true }));
+	el.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+function setCheckbox(el, checked) {
+	if (el.checked !== checked) {
+		el.checked = checked;
+		emitFormEvents(el);
+	}
+}
+
+function setRadio(el) {
+	if (!el.checked) {
+		el.checked = true;
+		emitFormEvents(el);
+	}
+}
+
+function setSelect(select, value) {
+	const optionExists = [...select.options].some(
+		option => option.value === value
+	);
+	if (!optionExists) {
+		throw new Error(`Option nicht gefunden: ${value}`);
+	}
+
+	select.value = value;
+	emitFormEvents(select);
+}
+
+function waitForElement(selector, timeoutMs = 8000) {
+	return new Promise((resolve, reject) => {
+		const existing = document.querySelector(selector);
+		if (existing) return resolve(existing);
+
+		const observer = new MutationObserver(() => {
+			const element = document.querySelector(selector);
+			if (element) {
+				observer.disconnect();
+				clearTimeout(timer);
+				resolve(element);
+			}
+		});
+
+		const timer = setTimeout(() => {
+			observer.disconnect();
+			reject(new Error(`Timeout beim Warten auf: ${selector}`));
+		}, timeoutMs);
+
+		observer.observe(document.documentElement, {
+			childList: true,
+			subtree: true
+		});
+	});
+}
+
 function initHelper() {
-	var modality_selector = document.getElementById('form-type-select');
+	const modality_selector = document.getElementById('form-type-select');
 	if (modality_selector) {
-		modality_selector.addEventListener('change', handleModalitySelection);
-		modality_selector.addEventListener('click', handleModalitySelection);
+		modality_selector.addEventListener('change', (event) => {
+			console.log("Selected:", event.target.value);
+			handleModalitySelection(event.target.value);
+		});
 	} else {
 		console.log("modality selector not found");
 	}
