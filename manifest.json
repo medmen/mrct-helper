@@ -12,7 +12,7 @@
 	"content_scripts": [
 		{
 			"matches": ["*://registry.mrct-registry.org/*"],
-			"js": ["mrct-helper.js"]
+			"js": ["presets.js", "form-controls.js", "mrct-helper.js"]
 		}
 	],
 

@@ -44,7 +44,9 @@ Future enhancements include:
 ### File Structure
 
 - `manifest.json`: Extension configuration
-- `mrct-helper.js`: Main content script that runs on the MRCT Registry website
+- `presets.js`: Exam type presets
+- `form-controls.js`: Form filling and control helpers
+- `mrct-helper.js`: Content script initialization and modality selection
 - `options.html`: HTML for the options page
 - `options.js`: JavaScript for the options page
 - `popup/mrct-helper_popup.html`: HTML for the extension popup
