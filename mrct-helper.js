@@ -80,15 +80,17 @@ function handleModalitySelection(modality) {
 }
 
 
-function initHelper() {
-	const modality_selector = document.getElementById('form-type-select');
-	if (modality_selector) {
-		modality_selector.addEventListener('change', (event) => {
-			console.log("Selected:", event.target.value);
-			handleModalitySelection(event.target.value);
-		});
-	} else {
-		console.log("modality selector not found");
+async function initHelper() {
+	try {
+		const modality_selector = await waitForElement('#form-type-select');
+		if (modality_selector) {
+			modality_selector.addEventListener('change', (event) => {
+				console.log("Selected:", event.target.value);
+				handleModalitySelection(event.target.value);
+			});
+		}
+	} catch (error) {
+		console.log("modality selector not found", error);
 	}
 }
 

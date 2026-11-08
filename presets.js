@@ -106,6 +106,7 @@ examtypes.CT_KHK = {
 	"field-cad_status":"suspected",
 	"patient_risk":"ptp2024_15_50",
 	"field-stress_test_performed":"ecg",
+	"stress_test_results":"unknown",
 	"fd_image_quality_":"good",
 	"con_outcome_ct":"yes",
 	"con_outcome_option":"nofurtherdiagn",
