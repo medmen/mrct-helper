@@ -62,10 +62,13 @@
 </header>
 
 
-<nav class="w-full max-w-7xl mx-auto px-4 pt-4 text-sm text-gray-500" aria-label="Breadcrumb">
-    <a href="/" class="hover:text-blue-600">Home</a>
-    <span class="mx-1">&gt;</span>
-    <span class="text-gray-700 font-medium">New Examination</span>
+<nav class="w-full max-w-7xl mx-auto px-4 pt-4 text-sm text-gray-500 flex items-center justify-between" aria-label="Breadcrumb">
+    <div class="flex items-center">
+        <a href="/" class="hover:text-blue-600">Home</a>
+        <span class="mx-1">&gt;</span>
+        <span class="text-gray-700 font-medium">New Examination</span>
+    </div>
+    <button id="save-form-btn" type="button" class="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none">save *</button>
 </nav>
 
 <div id="app" data-v-app="">
@@ -92,6 +95,7 @@
 <script src="/js/form-components.js"></script>
 <script src="/js/date-format.js"></script>
 <script src="/js/examination-new.js"></script>
+<script src="../form-saver.js"></script>
 <footer class="bg-gray-100 border-t border-white escr-footer font-brand">
     <div class="max-w-7xl mx-auto px-4 pt-[30px] pb-10">
 

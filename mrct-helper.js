@@ -35,6 +35,10 @@ window.addEventListener("message", function(event) {
 function handleModalitySelection(modality) {
 	console.log('selected modality is: ' + modality);
 
+	if (typeof filterPresetButtons === 'function') {
+		filterPresetButtons(modality);
+	}
+
 	if (modality.startsWith("CT")) {
 		setTimeout(() => {
 			fill_myform('CT_KHK').catch(error => {
