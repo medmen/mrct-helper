@@ -1,8 +1,12 @@
 function highlight_findings() {
 	// finally move to Section with ID finaldiagnosis
 	let findiag = document.getElementById("finaldiagnosis");
-	findiag.style.border = "thick solid #FF0000";
-	findiag.scrollIntoView({behavior: "smooth"}); 	
+	if (findiag) {
+		findiag.style.border = "thick solid #FF0000";
+		if (typeof findiag.scrollIntoView === 'function') {
+			findiag.scrollIntoView({behavior: "smooth"}); 	
+		}
+	}
 }
 
 function failure(){
@@ -10,18 +14,33 @@ function failure(){
 }
 
 /**
-// functions in content scripts cannot be called directly from page, so we need messaging to check which mri-button was clicked 
-console.log('adding listener for messages from page');
-window.addEventListener("message", function(event) {
-	if (event.source == window &&
-		event.data &&
-		event.data.direction == "from-page") {
-			console.log("button " + event.data.message + " clicked");
-			var mrtype = event.data.message; // cast into global scope 
-			fill_myform(mrtype).then(highlight_findings, failure);
-		}
-});
-**/
+ * Finds the "New Examination" breadcrumb element in the DOM.
+ *
+ * @returns {Element|null} The "New Examination" element, breadcrumb nav, or null.
+ */
+function findNewExamBreadcrumb() {
+	if (typeof document === 'undefined') return null;
+	const breadcrumbNav = (document.querySelector && document.querySelector('nav[aria-label="Breadcrumb"]')) ||
+		(document.querySelector && document.querySelector('nav')) ||
+		(document.querySelector && document.querySelector('.breadcrumb'));
+
+	if (!breadcrumbNav) return null;
+
+	if (typeof breadcrumbNav.querySelectorAll === 'function') {
+		const elements = Array.from(breadcrumbNav.querySelectorAll('span, a, div, li, p'));
+		const match = elements.find(el => {
+			const text = (el.textContent || '').trim().toLowerCase();
+			return text === 'new examination';
+		}) || elements.find(el => {
+			const text = (el.textContent || '').trim().toLowerCase();
+			return text.includes('new examination');
+		});
+		if (match) return match;
+	}
+
+	return breadcrumbNav;
+}
+
 
 /****
 * the main part:
@@ -40,46 +59,64 @@ function handleModalitySelection(modality) {
 	}
 
 	if (modality.startsWith("CT")) {
+		const mrButtons = document.getElementById("mrct-helper-buttons");
+		if (mrButtons && mrButtons.style) {
+			mrButtons.style.display = "none";
+		}
 		setTimeout(() => {
-			fill_myform('CT_KHK').catch(error => {
-				console.error("Could not fill CT_KHK form.", error);
-			});
+			if (typeof fill_myform === 'function') {
+				fill_myform('CT_KHK').catch(error => {
+					console.error("Could not fill CT_KHK form.", error);
+				});
+			}
 		}, 0);
 	} else if (modality.startsWith("MR")) {
 		// Avoid duplicate button elements
-		if (document.getElementById("mrct-helper-buttons")) {
+		const existingButtons = document.getElementById("mrct-helper-buttons");
+		if (existingButtons) {
+			if (existingButtons.style) {
+				existingButtons.style.display = "";
+			}
+			return;
+		}
+
+		if (typeof document === 'undefined' || typeof document.createElement !== 'function') {
 			return;
 		}
 
 		let selector_div = document.createElement("div");
 		selector_div.id = "mrct-helper-buttons";
+		selector_div.className = "inline-flex items-center ml-2";
 
 		const button = document.createElement("button");
 		button.type = "button";
+		button.className = "px-3 py-1 bg-gray-200 text-gray-800 text-sm font-medium rounded hover:bg-gray-300 focus:outline-none mr-2";
 		button.textContent = "MRT-VITAL 1,5T";
 		button.addEventListener('click', () => {
-			window.postMessage({direction: "from-page", message: "MRT_VITAL_15T"}, "*");
+			if (typeof fill_myform === 'function') {
+				fill_myform('MRT_VITAL_15T').then(highlight_findings, failure);
+			}
+			if (typeof window !== 'undefined' && typeof window.postMessage === 'function') {
+				window.postMessage({direction: "from-page", message: "MRT_VITAL_15T"}, "*");
+			}
 		});
 		selector_div.appendChild(button);
 
-		const button2 = document.createElement("button");
-		button2.type = "button";
-		button2.textContent = "MRT_ITIS_3T";
-		button2.addEventListener('click', () => {
-			window.postMessage({direction: "from-page", message: "MRT_ITIS_3T"}, "*");
-		});
-		selector_div.appendChild(button2);
-
-		const button3 = document.createElement("button");
-		button3.type = "button";
-		button3.textContent = "MRT-STRESS";
-		button3.addEventListener('click', () => {
-			window.postMessage({direction: "from-page", message: "MRT_STRESS"}, "*");
-		});
-		selector_div.appendChild(button3);
-
-		let target = document.getElementById('app');
-		target.insertBefore(selector_div, target.firstChild);
+		const breadcrumbTarget = findNewExamBreadcrumb();
+		if (breadcrumbTarget) {
+			if (typeof breadcrumbTarget.after === 'function') {
+				breadcrumbTarget.after(selector_div);
+			} else if (breadcrumbTarget.parentNode && typeof breadcrumbTarget.parentNode.insertBefore === 'function') {
+				breadcrumbTarget.parentNode.insertBefore(selector_div, breadcrumbTarget.nextSibling);
+			} else if (typeof breadcrumbTarget.appendChild === 'function') {
+				breadcrumbTarget.appendChild(selector_div);
+			}
+		} else {
+			let target = document.getElementById('app') || (document.body || null);
+			if (target && typeof target.insertBefore === 'function') {
+				target.insertBefore(selector_div, target.firstChild);
+			}
+		}
 	}
 }
 
@@ -98,8 +135,20 @@ async function initHelper() {
 	}
 }
 
-if (document.readyState === 'loading') {
-	document.addEventListener('DOMContentLoaded', initHelper);
-} else {
-	initHelper();
+if (typeof document !== 'undefined') {
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initHelper);
+	} else {
+		initHelper();
+	}
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+	module.exports = {
+		highlight_findings,
+		failure,
+		findNewExamBreadcrumb,
+		handleModalitySelection,
+		initHelper
+	};
 }

@@ -2,16 +2,21 @@
 <html lang="de">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="mrct-helper_popup.css"/>
 </head>
 <body>
-	<ul>
+	<ul id="default-presets">
 		<li id="CT" class="button mr">CT</li>
 		<li id="MR-STRESS" class="button mr">MRT A-Streß</li>
 		<li id="MR-ITIS" class="button mr">MRT Itis</li>
 		<li class="button clear">Reset</li>
 	</ul>
+
+	<div id="saved-presets-container" class="saved-section">
+		<div class="saved-title">Gespeicherte Presets</div>
+		<ul id="saved-presets-list" class="preset-list"></ul>
+	</div>
 
 	<script src="mrct-helper_popup.js"></script>
 </body>
